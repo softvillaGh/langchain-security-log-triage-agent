@@ -1,108 +1,140 @@
-# 🛡️ AI Security Log Triage Agent (LangChain)
+# 🛡️ AI Security Log Triage Agent
 
-An AI-powered cybersecurity agent that moves beyond traditional rule-based SIEM triage by using reasoning-driven analysis to detect threats, extract IOCs, and generate actionable security insights.
+An AI-powered cybersecurity triage layer that enhances traditional SIEM workflows by applying reasoning-driven analysis to detect threats, prioritize alerts, and generate actionable security insights.
 
 ---
 
 ## 🚀 Overview
 
-Security teams are overwhelmed by noisy logs and alert fatigue.
+Security teams—especially in SMBs and mid-sized organizations—face alert fatigue from noisy logs and limited triage capacity.
 
-This project introduces a LangChain-based AI agent that:
-- Analyzes raw logs
-- Detects suspicious patterns
+This project introduces a **lightweight AI-assisted triage engine** that:
+
+- Ingests logs from multiple sources (file, SIEM simulation)
+- Detects suspicious patterns and attack behaviors
 - Extracts Indicators of Compromise (IOCs)
-- Assigns severity levels
-- Recommends response actions
+- Assigns severity levels dynamically
+- Identifies repeated malicious activity
+- Generates analyst-ready reports (JSON + HTML)
 
-This is not a chatbot — it's a reasoning security agent.
+👉 This is **not a chatbot** — it is a **reasoning-based security analysis engine**.
 
 ---
 
 ## ⚙️ Core Capabilities
 
-- Log analysis for SSH, HTTP, and system logs
-- Threat detection for failed logins, brute force, and suspicious access
-- Context-aware reasoning
-- Severity classification
-- Structured incident summaries
-- Actionable remediation recommendations
+- 🔌 Multi-source log ingestion (file + simulated SIEM)
+- 🧠 Rule + pattern-based threat detection
+- 🚨 Severity classification (Low / High / Critical)
+- 🔁 Repeated attack detection (e.g., brute force)
+- 📊 Executive summary generation
+- 🧾 Structured reporting (JSON + HTML)
+- 💡 Actionable recommendations for analysts
 
 ---
 
 ## 🧠 Example Output
 
 ```text
-Incident: Multiple failed SSH login attempts detected
-Severity: High
-Confidence: 0.92
+SECURITY TRIAGE REPORT
 
-Indicators:
-- Repeated login failures from IP 192.168.1.100
-- Possible brute force attack pattern
+Headline: Critical malicious activity detected from 10.0.0.5
 
-Recommended Actions:
-- Block offending IP
-- Enable rate limiting
-- Review authentication logs
+Total Events: 4
+Critical: 2 | High: 1 | Low: 1
+Unique IPs: 3
 
+[1] Incident: Failed login
+    Time: 2026-04-23T10:00:00Z
+    Source: splunk
+    IP: 10.0.0.5
+    Severity: Critical
+    Attack Type: Brute Force / Repeated Malicious Activity
+    Recommendation: Block the IP and investigate immediately
 🏗️ Architecture
-[ Log Input ]
-      ↓
-[ Preprocessing ]
-      ↓
-[ AI Agent (LangChain) ]
-      ↓
- ├── Threat Detection
- ├── IOC Extraction
- ├── Severity Classification
- └── Response Recommendation
-      ↓
-[ Structured Security Report ]
-
+[ Log Sources (File / SIEM) ]
+              ↓
+     [ Connectors Layer ]
+              ↓
+     [ Parsing & Normalization ]
+              ↓
+     [ Triage Engine ]
+       ├── Detection
+       ├── Classification
+       ├── IOC Extraction
+       └── Severity Scoring
+              ↓
+     [ Reporting Layer ]
+       ├── Console Output
+       ├── JSON Report
+       └── HTML Report
 🔧 Tech Stack
 Python
-LangChain
-LLMs
-Regex and heuristic detection
+Modular architecture (connectors, agents, output layers)
 JSON-based reporting
+Heuristic + rule-based detection (AI-ready for extension)
+▶️ Usage
 
+Run with CLI:
+
+python -m app.main --source splunk
+
+or:
+
+python -m app.main --source file
+📦 Output
+
+After execution, reports are generated in:
+
+outputs/
+JSON report (machine-readable)
+HTML report (human-friendly, shareable)
 🧩 Use Cases
-SOC log triage automation
+SOC triage automation for SMBs
 Security monitoring enhancement
 AI-assisted incident response
-Threat intelligence enrichment
-
+Alert prioritization layer for SIEM tools
+Security consulting and reporting
 🔐 Why This Matters
 
-Traditional systems often rely on static rules, generate high false positives, and lack context.
+Traditional SIEM systems:
 
-This approach uses reasoning to adapt to suspicious patterns and produce human-readable security intelligence.
+rely on static rules
+produce high false positives
+lack contextual reasoning
 
+This system:
+
+applies structured reasoning
+detects patterns across events
+prioritizes threats effectively
+produces actionable intelligence
 🔄 Future Enhancements
-MITRE ATT&CK mapping
-Multi-agent orchestration
-SIEM integration with Splunk, ELK, or Wazuh
-AI red team simulation
-Dashboard and visualization
-
-📦 Installation
-git clone https://github.com/softvillaGh/langchain-security-log-triage-agent.git
-cd langchain-security-log-triage-agent
-pip install -r requirements.txt
-
-▶️ Usage
-python app/main.py
-
+MITRE ATT&CK Mapping
+Map detections to adversary tactics and techniques.
+Multi-Agent Orchestration
+Introduce specialized agents for detection, enrichment, and response.
+Real SIEM Integration
+Connect to Splunk, ELK, Wazuh APIs.
+AI Red Team Simulation
+Model attack paths and adversarial behavior.
+Dashboard & Visualization
+Real-time insights and trend analysis.
+Workflow Automation
+Ticketing, alerting, and response pipelines.
+Executive Reporting
+Export to PDF and client-ready formats.
 🤝 Let's Connect
-If you're working on AI in cybersecurity, security automation, or red teaming and blue teaming with AI, let’s connect.
 
-Open to opportunities in AI and Cybersecurity.
+Open to:
 
+AI Security roles
+Cybersecurity Analyst positions
+Security automation consulting
 ⭐ Support
 
 If you find this useful:
 
-Star the repo
+Star ⭐ the repo
 Share feedback
-Suggest improvements
+Contribute ideas
