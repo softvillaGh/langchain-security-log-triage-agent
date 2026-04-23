@@ -1,26 +1,12 @@
-# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-
-# Virtual environments
 venv/
 .env
-
-# Output reports (generated files)
 outputs/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-
-# Temporary / backups
 README_old.md
-
-# IDE files
 .vscode/
 .idea/
+.DS_Store
+Thumbs.db

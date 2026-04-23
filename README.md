@@ -21,14 +21,18 @@ This is **not a chatbot** — it is a **reasoning-based security analysis engine
 
 ---
 
+
 ## ⚙️ Core Capabilities
 
 - Multi-source log ingestion (file + simulated SIEM)
 - Rule + pattern-based threat detection
 - Severity classification (Low / High / Critical)
 - Repeated attack detection (for example, brute force)
+- MITRE ATT&CK enrichment
 - Executive summary generation
-- Structured reporting (JSON + HTML)
+- Structured reporting (JSON + HTML + CSV)
+- Alert generation for High and Critical events
+- Interactive dashboard for analyst and client review
 - Actionable recommendations for analysts
 
 ---
@@ -99,11 +103,13 @@ JSON report (machine-readable)
 HTML report (human-friendly, shareable)
 
 🧩 Use Cases
-SOC triage automation for SMBs
-Security monitoring enhancement
-AI-assisted incident response
-Alert prioritization layer for SIEM tools
-Security consulting and reporting
+
+- SOC triage automation for SMBs
+- Security monitoring enhancement for mid-sized organizations
+- AI-assisted incident response
+- Alert prioritization layer for SIEM tools
+- Security consulting and vCISO reporting
+- Client-facing incident summaries and executive reporting
 
 🔐 Why This Matters
 

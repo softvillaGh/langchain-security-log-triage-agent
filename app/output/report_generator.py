@@ -1,3 +1,4 @@
+import csv
 import json
 import os
 from collections import Counter
@@ -40,6 +41,20 @@ def save_report(results, output_file="outputs/report.json"):
 
     html_output = output_file.replace(".json", ".html")
     save_html_report(report, html_output)
+
+
+def save_csv_report(results, output_file="outputs/report.csv"):
+    if not results:
+        return
+
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+
+    fieldnames = list(results[0].keys())
+
+    with open(output_file, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(results)
 
 
 def save_html_report(report, output_file):
@@ -169,6 +184,8 @@ def save_html_report(report, output_file):
         <p><span class="label">IP:</span> {event['ip']}</p>
         <p><span class="label">Severity:</span> {event['severity']}</p>
         <p><span class="label">Attack Type:</span> {event['attack_type']}</p>
+        <p><span class="label">MITRE Tactic:</span> {event['mitre_tactic']}</p>
+        <p><span class="label">MITRE Technique:</span> {event['mitre_technique_id']} - {event['mitre_technique']}</p>
         <p><span class="label">Events from IP:</span> {event['event_count_for_ip']}</p>
         <p><span class="label">Recommendation:</span> {event['recommendation']}</p>
     </div>
