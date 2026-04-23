@@ -1,68 +1,70 @@
-import json
+import argparse
+from datetime import datetime
 
-from app.agent import build_agent
-from app.tools import detect_iocs, map_tactics
-from app.reporting import save_json_report, save_markdown_report
+from app.connectors.file_connector import load_logs
+from app.connectors.splunk_connector import fetch_splunk_logs
+from app.agent.triage_agent import analyze_logs
+from app.output.report_generator import save_report, build_summary
+
+
+def print_report(results):
+    summary = build_summary(results)
+
+    print("=" * 60)
+    print("SECURITY TRIAGE REPORT")
+    print("=" * 60)
+    print(f"Headline: {summary['headline']}")
+    print(f"Total Events: {summary['total_events']}")
+    print(f"Critical: {summary['critical_events']} | High: {summary['high_events']} | Low: {summary['low_events']}")
+    print(f"Unique IPs: {summary['unique_ips']}")
+    print(f"Top Attack Types: {summary['top_attack_types']}")
+    print()
+
+    for i, r in enumerate(results, start=1):
+        print(f"[{i}] Incident: {r['incident']}")
+        print(f"    Time: {r['timestamp']}")
+        print(f"    Source: {r['source']}")
+        print(f"    IP: {r['ip']}")
+        print(f"    Severity: {r['severity']}")
+        print(f"    Attack Type: {r['attack_type']}")
+        print(f"    Events from IP: {r['event_count_for_ip']}")
+        print(f"    Recommendation: {r['recommendation']}")
+        print()
+
+
+def get_logs(source):
+    if source == "file":
+        return load_logs("data/sample_logs.json")
+    if source == "splunk":
+        return fetch_splunk_logs()
+    raise ValueError("Invalid log source. Use 'file' or 'splunk'.")
 
 
 def main():
-    log = input("Enter log: ")
-
-    # Run tools first so facts are deterministic
-    indicators_json = detect_iocs.invoke({"log_text": log})
-    tactics_json = map_tactics.invoke({"indicators_json": indicators_json})
-
-    indicators = json.loads(indicators_json)
-    tactics = json.loads(tactics_json)
-
-    # Normalize indicator labels for the report
-    normalized_indicators = []
-    for item in indicators:
-        if isinstance(item, dict):
-            normalized_indicators.append(item.get("label", "unknown"))
-        elif isinstance(item, str):
-            normalized_indicators.append(item)
-
-    agent = build_agent()
-
-    result = agent.invoke(
-        {
-            "messages": [
-                {
-                    "role": "user",
-                    "content": (
-                        f"Analyze this log: {log}\n\n"
-                        f"Detected indicators (use exactly these): {json.dumps(normalized_indicators)}\n"
-                        f"Mapped tactics (use exactly these): {json.dumps(tactics)}\n\n"
-                        "Return a structured incident report. "
-                        "Use the exact indicators and exact tactics provided above. "
-                        "Do not change them, do not invent new ones, and do not put verdict values inside tactics."
-                    ),
-                }
-            ]
-        }
+    parser = argparse.ArgumentParser(description="AI Security Log Triage Agent")
+    parser.add_argument(
+        "--source",
+        choices=["file", "splunk"],
+        default="splunk",
+        help="Choose the log source"
     )
 
-    structured = result.get("structured_response")
-    if structured is None:
-        print("No structured response returned.")
-        print(result)
-        return
+    args = parser.parse_args()
 
-    report = structured.model_dump()
+    logs = get_logs(args.source)
+    results = analyze_logs(logs)
 
-    # Final safety override to keep report consistent
-    report["indicators"] = normalized_indicators
-    report["tactics"] = tactics
+    print_report(results)
 
-    print("\n=== INCIDENT REPORT ===")
-    print(json.dumps(report, indent=2))
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+    output_file = f"outputs/{args.source}_report_{timestamp}.json"
 
-    json_path = save_json_report(report)
-    md_path = save_markdown_report(report)
+    save_report(results, output_file=output_file)
 
-    print(f"\nSaved JSON report to: {json_path}")
-    print(f"Saved Markdown report to: {md_path}")
+    html_file = output_file.replace(".json", ".html")
+
+    print(f"Saved JSON report to {output_file}")
+    print(f"Saved HTML report to {html_file}")
 
 
 if __name__ == "__main__":
